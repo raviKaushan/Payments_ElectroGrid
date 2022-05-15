@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-//import javax.ws.rs.GET;
-//import javax.ws.rs.Path;
 
 public class Payments {
 	
@@ -18,7 +16,6 @@ public class Payments {
 
 			// Provide the correct details: DBServer/DBName, username, password
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/electro_payment", "root", "");
-		//	con = DriverManager.getConnection("jdbc:mysql://localhost:3306/electro_payment?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC","root", "");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -36,21 +33,21 @@ public class Payments {
 			if (con == null) {
 				return "Error while connecting to the database for inserting.";
 			}
+			
 			// create a prepared statement
 			String query = " insert into electro_payment(`b_id`, `account_number`, `c_id`, `c_name`, `amount`, `card_number`, `bank_name`, `card_exp_date`, `cvv`, `date`)"
 					+ " values (?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
+			
 			// binding values
 			preparedStmt.setString(1, b_id);
 			preparedStmt.setString(2, account_number);
 			preparedStmt.setString(3, c_id);
 			preparedStmt.setString(4, c_name);
-		
 			preparedStmt.setString(5, amount);
 			preparedStmt.setString(6, card_number);
 			preparedStmt.setString(7, bank_name);
 			preparedStmt.setString(8, card_exp_date);
-		
 			preparedStmt.setString(9, cvv);
 			preparedStmt.setString(10, date);
 
@@ -68,7 +65,7 @@ public class Payments {
 		return output;
 	}
 	
-	
+
 	public String readProject() {
 		String output = "";
 		try {
@@ -76,31 +73,43 @@ public class Payments {
 			if (con == null) {
 				return "Error while connecting to the database for reading.";
 			}
-			// Prepare the html table to be displayed
-			output = "<table border=\'1\'><tr><th> Bill ID </th><th> Account Number </th><th> Customer ID </th><th> Customer Name </th><th> Total Amount </th><th> Card Number </th><th> Bank Name </th><th> Card Exp Date </th><th> CVV </th><th> Payment Date </th><th>Update</th><th>Delete</th></tr>";
+			// Prepare table to display
+			
+			output = "<table class='table table-striped table-dark'><tr><th style=width:100px; >Bill ID</th>"
+					+ "<th style=width:100px; >Account Number</th>"
+					+ "<th style=width:100px; >Customer ID</th>"
+					+ "<th style=width:100px; >Customer Name</th>"
+					+ "<th style=width:100px; >Total Amount</th>"
+					+ "<th style=width:100px; >Card Number</th>"
+					+ "<th style=width:100px; >Bank Name</th>"
+					+ "<th style=width:100px; >Card Exp Date</th>"
+					+ "<th style=width:100px; >CVV</th>"
+					+ "<th style=width:100px; >Payment Date</th>"
+					+ "<th style=width:50px; >Update</th>"
+					+ "<th style=width:50px; >Remove</th></tr>";
+			
 			String query = "select * from electro_payment";
 
 			Statement stmt = (Statement) con.createStatement();
 			ResultSet rs = ((java.sql.Statement) stmt).executeQuery(query);
+			
 			// iterate through the rows in the result set
 			while (rs.next()) {
-			//	int id = rs.getString("id");
+				
 				String id = rs.getString("id");
 				String b_id = rs.getString("b_id");
 				String account_number = rs.getString("account_number");
 				String c_id = rs.getString("c_id");
 				String c_name = rs.getString("c_name");
-			
 				String amount = rs.getString("amount");
 				String card_number = rs.getString("card_number");
 				String bank_name = rs.getString("bank_name");
 				String card_exp_date = rs.getString("card_exp_date");
-			
 				String cvv = rs.getString("cvv");
 				String date = rs.getString("date");
 				
 
-				// Add into the html table
+				// Add into the table
 				output += "<tr><td><input id=\'hidProjectIDUpdate\' name=\'hidProjectIDUpdate\' type=\'hidden\' value=\'"
 						+ id + "'>" + b_id + "</td>";
 				output += "<td>" + account_number + "</td>";
@@ -122,7 +131,7 @@ public class Payments {
 
 			con.close();
 
-			// Complete the html table
+			// Complete the table
 			output += "</table>";
 		} catch (Exception e) {
 			output = "Error while reading the projects.";
@@ -131,7 +140,6 @@ public class Payments {
 
 		return output;
 	}
-	
 	
 	public String updateProject(String id,String b_id,String account_number,String c_id,String c_name,String amount,String card_number,String bank_name,String card_exp_date,String cvv,String date) {
 		String output = "";
@@ -150,9 +158,6 @@ public class Payments {
 
 			// binding values
 
-			
-		//	preparedStmt.setInt(4, Integer.parseInt(id));
-			
 			preparedStmt.setString(1, b_id);
 			preparedStmt.setString(2, account_number);
 			preparedStmt.setString(3, c_id);
@@ -164,7 +169,7 @@ public class Payments {
 			preparedStmt.setString(9, cvv);
 			preparedStmt.setString(10, date);
 			preparedStmt.setInt(11, Integer.parseInt(id));
-		//	preparedStmt.setInt(11,id);
+		
 
 			// execute the statement
 			preparedStmt.execute();
